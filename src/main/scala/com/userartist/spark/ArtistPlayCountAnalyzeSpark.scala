@@ -1,13 +1,13 @@
 package com.userartist.spark
 
 import com.userartist.appconf.AppConf
-import com.userartist.common.Constants
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Row, SQLContext, SparkSession}
+import org.apache.spark.sql.{Row, SQLContext}
 
 
 object UserArtistAnalyzeSpark extends AppConf {
+
 
 
   def main(args: Array[String]): Unit = {
@@ -22,19 +22,38 @@ object UserArtistAnalyzeSpark extends AppConf {
     val userArtistAggInfo = userArtistRdd.map(row => ((row.getLong(1), row)));
     val artistAggInfo = artistRdd.map(row => ((row.getLong(0), row)));
 
-    val userArtistNameRDD = userArtistAggInfo.join(artistAggInfo);
+    val artistNameRDD = userArtistAggInfo.join(artistAggInfo);
 
-    val userArtistNameFormatRDD = userArtistNameRDD.map(tuple => (tuple._2._1.getLong(0), tuple._1, tuple._2._1.getInt(2), tuple._2._2.getString(1)))
+    val artistNameFormatRDD = artistNameRDD.map(tuple => (tuple._2._1.getLong(0), tuple._1, tuple._2._1.getInt(2), tuple._2._2.getString(1)))
 
-    val userArtistNameFormatGroupRDD = userArtistNameFormatRDD.groupBy(_._1);
+    val artistNameFormatGroupRDD = artistNameFormatRDD.groupBy(_._2);
 
     /**
       * 用户听歌数量
       */
-    val userPlayCountsRdd = getUserPlayCounts(userArtistNameFormatGroupRDD)
+    val userPlayCountsRdd = getArtisPlayCounts(artistNameFormatGroupRDD)
 
-    userPlayCountsRdd.saveAsTextFile("hdfs://hadoop102:9000/data")
+
+   val userPlayCountsSortRdd= userPlayCountsRdd.join(artistAggInfo).map(tuple=>{
+      (tuple._2._2.getString(1),tuple._2._1)
+    }).sortBy(count=>(count._2),false)
+
+    userPlayCountsSortRdd.saveAsTextFile("hdfs://hadoop102:9000/data2")
   }
+
+
+  def getArtisPlayCounts(userArtistNameFormatGroupRDD: RDD[(Long, Iterable[(Long, Long, Int, String)])]) = {
+    userArtistNameFormatGroupRDD.map(tuple=>{
+      val artistItr=tuple._2.iterator;
+      var playCounts = 0;
+      while(artistItr.hasNext){
+        val artist=artistItr.next();
+        playCounts +=artist._3;
+      }
+      (tuple._1,playCounts)
+    })
+  }
+
 
   private def getUserPlayCounts(userArtistNameFormatGroupRDD: RDD[(Long, Iterable[(Long, Long, Int, String)])]) = {
     userArtistNameFormatGroupRDD.map(tuple => {
