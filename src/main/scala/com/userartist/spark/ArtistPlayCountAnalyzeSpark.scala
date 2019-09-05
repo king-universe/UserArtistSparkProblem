@@ -6,7 +6,10 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Row, SQLContext}
 
 
-object UserArtistAnalyzeSpark extends AppConf {
+/**
+  * 获取歌手所有歌曲被听过的排序，并将数据保存在hdfs中
+  */
+object ArtistPlayCountAnalyzeSpark extends AppConf {
 
 
 
