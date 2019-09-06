@@ -1,7 +1,6 @@
 package com.userartist.sparkstream
 
 import com.userartist.appconf.AppConf
-import com.userartist.sparkstream.SparkStreamingSocketWordCountWindows.ssc
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.Seconds
 import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}

@@ -78,9 +78,17 @@
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-flume-sink -->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming-flume-sink_2.11</artifactId>
-            <version>2.1.1</version>
+            <artifactId>spark-streaming-flume-sink_2.12</artifactId>
+            <version>2.4.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-flume -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-flume_2.12</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+
 
     </dependencies>
 
