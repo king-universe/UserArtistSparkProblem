@@ -10,8 +10,16 @@ import org.apache.spark.streaming.kafka010.{ConsumerStrategies, ConsumerStrategy
 /**
   * kafka如果需要外网访问需要在kafka的server.properties配置文件中配置
   *
-    host.name=阿里云内网地址      #kafka绑定的interface
-    advertised.listeners=PLAINTEXT://阿里云外网映射地址:9092    # 注册到zookeeper的地址和端口
+  *host.name=内网地址      #kafka绑定的interface
+  *advertised.listeners=PLAINTEXT://外网映射地址:9092    # 注册到zookeeper的地址和端口
+  *
+  *
+  * kafka的创建主题命令 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic kafkaSpark
+  *
+  * kafka启动命令   bin/kafka-console-producer.sh --broker-list 外网（或者内网的ip，你在用的是时候是什么ip就选择什么）:9092 --topic kafkaSpark
+  *
+  *
+  *
   *
   */
 object SparkStreamingKafkaDirect extends AppConf {
